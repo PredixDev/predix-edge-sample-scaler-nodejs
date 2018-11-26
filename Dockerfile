@@ -1,8 +1,17 @@
-# start with the Predix Edge base alpine image
-FROM dtr.predix.io/predix-edge/alpine-amd64
+# start with the node image
+FROM node
+
+LABEL maintainer="Predix Builder Relations"
+LABEL org="https://hub.docker.com/u/predixadoption"
+LABEL version="1.0.8"
+LABEL support="https://forum.predix.io"
+LABEL license="https://github.com/PredixDev/predix-docker-samples/blob/master/LICENSE.md"
+
+ENV LANG C.UTF-8
 
 #install nodejs into the base image
-RUN apk update && apk add nodejs
+#RUN apk update && apk add nodejs
+
 
 # Create app directory in the image
 WORKDIR /usr/src

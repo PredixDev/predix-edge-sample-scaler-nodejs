@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 trap "trap_ctrlc" 2

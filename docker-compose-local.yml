@@ -1,7 +1,7 @@
 version: "3.0"
 
-services:
 
+services:
   opcua-simulator:
     image: "dtr.predix.io/predix-edge/predix-edge-opcua-simulator:latest"
     networks:
@@ -9,39 +9,28 @@ services:
     ports:
       - 4334:4334
   opcua:
-    image: "dtr.predix.io/predix-edge/protocol-adapter-opcua-amd64:latest"
-
+    image: "dtr.predix.io/predix-edge/protocol-adapter-opcua:amd64-1.1.0"
     environment:
       config: "/config/config-opcua.json"
+    volumes:
+      - ./config:/config
+      - ./data:/data
     networks:
       - predix-edge-broker_net
-
   cloud_gateway_timeseries:
     image: "dtr.predix.io/predix-edge/cloud-gateway:amd64-1.1.0"
     environment:
       config: "/config/config-cloud-gateway.json"
+    volumes:
+      - ./config:/config
+      - ./data:/data
+      - ./data:/edge-agent
     networks:
       - predix-edge-broker_net
-
   edge-to-cloud-filter:
-    image: "edge-to-cloud-filter:1.0.0"
+    image: "predixadoption/edge-to-cloud-filter:{EDGE_TO_CLOUD_FILTER_VERSION}"
     networks:
       - predix-edge-broker_net
-
-  edge-app:
-    image: "my-nodejs-edge-app:latest"
-    networks:
-      - predix-edge-broker_net
-
-  cloud_gateway:
-    image: "dtr.predix.io/predix-edge/cloud-gateway:amd64-latest"
-    environment:
-      config: "/config/config-cloud-gateway.json"
-    env_file:
-      - /etc/environment
-    networks:
-      - predix-edge-broker_net
-
 networks:
   predix-edge-broker_net:
     external: true

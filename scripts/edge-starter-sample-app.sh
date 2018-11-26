@@ -1,11 +1,13 @@
 #!/bin/bash
-HOME_DIR=$(pwd)
-
-#!/bin/bash
 set -e
 
-RUN_QUICKSTART=1
-SKIP_PREDIX_SERVICES="false"
+trap "trap_ctrlc" 2
+
+
+ROOT_DIR=$(pwd)
+logDir="$ROOT_DIR/predix-scripts/log"
+BUILD_APP=false
+SKIP_PREDIX_SERVICES=false
 function local_read_args() {
   while (( "$#" )); do
   opt="$1"
@@ -15,22 +17,19 @@ function local_read_args() {
       QUICKSTART_ARGS="$SCRIPT $1"
       break
     ;;
-    --no-quickstart)
-      RUN_QUICKSTART=0
-    ;;
-    -i)
-      INSTANCE_PREPENDER="$2"
-    ;;
     -b|--branch)
       BRANCH="$2"
       QUICKSTART_ARGS+=" $1 $2"
       shift
     ;;
-    -o|--override)
-      QUICKSTART_ARGS=" $SCRIPT"
+    --build-app)
+      BUILD_APP=true
     ;;
     --skip-predix-services)
-      SKIP_PREDIX_SERVICES="true"
+      SKIP_PREDIX_SERVICES=true
+    ;;
+    -o|--override)
+      QUICKSTART_ARGS=" $SCRIPT"
     ;;
     --skip-setup)
       SKIP_SETUP=true
@@ -49,45 +48,45 @@ function local_read_args() {
   fi
 }
 
-# default settings
 BRANCH="master"
 PRINT_USAGE=0
 SKIP_SETUP=false
 
-IZON_SH="https://raw.githubusercontent.com/PredixDev/izon/1.1.0/izon2.sh"
+IZON_SH="https://raw.githubusercontent.com/PredixDev/izon/1.2.0/izon2.sh"
 #ASSET_MODEL="-amrmd predix-ui-seed/server/sample-data/predix-asset/asset-model-metadata.json predix-ui-seed/server/sample-data/predix-asset/asset-model.json"
-SCRIPT="-script build-basic-app.sh -script-readargs build-basic-app-readargs.sh"
+REPO_NAME="predix-edge-sample-scaler-nodejs"
+DOCKER_STACK_NAME="edge-to-cloud"
+SCRIPT="-script edge-starter-deploy.sh -script-readargs edge-starter-deploy-readargs.sh --run-edge-app"
 VERSION_JSON="version.json"
-PREDIX_SCRIPTS=predix-scripts
-REPO_NAME=predix-edge-sample-scaler-nodejs
-SCRIPT_NAME="edge-starter-sample-app.sh"
-APP_DIR="edge-sample-nodejs"
-APP_NAME="Predix Front End Basic App - Node.js Express with UAA, Asset, Time Series"
+PREDIX_SCRIPTS="predix-scripts"
+VERSION_JSON="version.json"
+APP_DIR="edge-to-cloud"
+APP_NAME="Edge Starter Hello World"
 GITHUB_RAW="https://raw.githubusercontent.com/PredixDev"
-TOOLS="Cloud Foundry CLI, Git, Node.js, Predix CLI"
-TOOLS_SWITCHES="--cf --git --nodejs --predixcli"
+GITHUB_RAW_REPO="https://raw.githubusercontent.com/PredixDev"
+
+TOOLS="Docker, Git"
+TOOLS_SWITCHES="--docker --git"
 
 # Process switches
 local_read_args $@
 
-#variables after processing switches
-SCRIPT_LOC="$GITHUB_RAW/$REPO_NAME/$BRANCH/scripts/$SCRIPT_NAME"
-VERSION_JSON_URL=$GITHUB_RAW/$REPO_NAME/$BRANCH/version.json
+VERSION_JSON_URL="$GITHUB_RAW_REPO/$REPO_NAME/$BRANCH/version.json"
 
 if [[ "$SKIP_PREDIX_SERVICES" == "true" ]]; then
-  QUICKSTART_ARGS="$QUICKSTART_ARGS -p $SCRIPT"
+  QUICKSTART_ARGS="$QUICKSTART_ARGS $SCRIPT -repo-name $REPO_NAME -app-name $DOCKER_STACK_NAME"
 else
-  QUICKSTART_ARGS="$QUICKSTART_ARGS -uaa -ts -psts $SCRIPT"
+  QUICKSTART_ARGS="$QUICKSTART_ARGS $SCRIPT -uaa -ts -psts -repo-name $REPO_NAME -app-name $DOCKER_STACK_NAME"
 fi
 
 function check_internet() {
   set +e
   echo ""
   echo "Checking internet connection..."
-  curl "http://github.com" > /dev/null 2>&1
+  curl "http://google.com" > /dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo "Unable to connect to internet, make sure you are connected to a network and check your proxy settings if behind a corporate proxy"
-    echo "If you are behind a corporate proxy, set the 'http_proxy' and 'https_proxy' environment variables.   Please read this tutorial for detailed info about setting your proxy https://www.predix.io/resources/tutorials/tutorial-details.html?tutorial_id=1565"
+    echo "If you are behind a corporate proxy, set the 'http_proxy' and 'https_proxy' environment variables."
     exit 1
   fi
   echo "OK"
@@ -110,10 +109,9 @@ function init() {
 
   #get the script that reads version.json
   eval "$(curl -s -L $IZON_SH)"
-  getUsingCurl $SCRIPT_LOC
-  chmod 755 $SCRIPT_NAME;
+
   getVersionFile
-  getLocalSetupFuncs $GITHUB_RAW
+  getLocalSetupFuncs
 }
 
 if [[ $PRINT_USAGE == 1 ]]; then
@@ -130,88 +128,48 @@ fi
 
 getPredixScripts
 #clone the repo itself if running from oneclick script
+#if [[ ! -d "$PREDIX_SCRIPTS/$REPO_NAME" ]]; then
+#  echo "repo not present"
 getCurrentRepo
+#fi
 
+echo "pwd after copy -> $(pwd)"
 echo "quickstart_args=$QUICKSTART_ARGS"
+cd $PREDIX_SCRIPTS/$REPO_NAME
+dockerVersion=$(grep version Dockerfile | awk -F"=" '{print $2}' | tr -d "\"")
+echo "$dockerVersion"
+sed "s#{EDGE_TO_CLOUD_FILTER_VERSION}#$dockerVersion#" docker-compose-local.yml > $(pwd)/docker-compose-local.yml.tmp
+mv $(pwd)/docker-compose-local.yml.tmp $(pwd)/docker-compose-local.yml
+
+sed "s#{EDGE_TO_CLOUD_FILTER_VERSION}#$dockerVersion#" docker-compose.yml > $(pwd)/docker-compose.yml.tmp
+mv $(pwd)/docker-compose.yml.tmp $(pwd)/docker-compose.yml
+
+if [[ "$BUILD_APP" == "true" ]]; then
+  docker build  --no-cache -t "predixadoption/edge-to-cloud-filter:$dockerVersion" -f ./Dockerfile . --build-arg http_proxy --build-arg https_proxy --build-arg no_proxy
+else
+  docker pull predixadoption/edge-to-cloud-filter:$dockerVersion
+fi
+cd ../..
+
 export TIMESERIES_CHART_ONLY="true"
+
 source $PREDIX_SCRIPTS/bash/quickstart.sh $QUICKSTART_ARGS
 
-if [[ "$RUN_QUICKSTART" == "1" ]]; then
-  pwd
-  cd $REPO_NAME
-
-  set -e
-  docker pull dtr.predix.io/predix-edge/predix-edge-mosquitto-amd64:latest
-  docker pull dtr.predix.io/predix-edge/protocol-adapter-opcua-amd64:latest
-  docker pull dtr.predix.io/predix-edge/cloud-gateway-timeseries-amd64:latest
-
-  docker ps
-
-  docker images
-
-  pwd
-  ls
-  if [[ "$TIMESERIES_INGEST_URI" == "" ]]; then
-    getTimeseriesIngestUriFromInstance $TIMESERIES_INSTANCE_NAME
-  fi
-  if [[ "$TIMESERIES_QUERY_URI" == "" ]]; then
-    getTimeseriesQueryUriFromInstance $TIMESERIES_INSTANCE_NAME
-  fi
-  if [[ "$TIMESERIES_ZONE_ID" == "" ]]; then
-    getTimeseriesZoneIdFromInstance $TIMESERIES_INSTANCE_NAME
-  fi
-  if [[ "$UAA_URL" == "" ]]; then
-    getTrustedIssuerIdFromInstance $UAA_INSTANCE_NAME
-  fi
-  echo "TIMESERIES_ZONE_ID : $TIMESERIES_ZONE_ID"
-  __find_and_replace ".*predix_zone_id\":.*" "          \"predix_zone_id\": \"$TIMESERIES_ZONE_ID\"," "config/config-cloud-gateway.json" "$quickstartLogDir"
-  echo "proxy_url : $http_proxy"
-  __find_and_replace ".*proxy_url\":.*" "          \"proxy_url\": \"$http_proxy\"" "config/config-cloud-gateway.json" "$quickstartLogDir"
-
-  ./scripts/get-access-token.sh $UAA_CLIENTID_GENERIC $UAA_CLIENTID_GENERIC_SECRET $TRUSTED_ISSUER_ID
-  pwd
-  cat data/access_token
-
-  mkdir data/store_forward_queue
-  chmod 777 data/store_forward_queue
-  
-  pwd
-  ls
-  docker service ls -f "name=predix-edge-broker_predix-edge-broker"
-
-  docker stack deploy --with-registry-auth --compose-file docker-compose-edge-broker.yml predix-edge-broker
-  sleep 10
-  if [[  $(docker service ls -f "name=predix-edge-broker" | grep 0/1 | wc -l) == "1" ]]; then
-    docker service ls
-    echo 'Error: One of the predix-edge-broker services did not launch'
-    exit 1
-  fi
-
-  docker stack deploy --with-registry-auth --compose-file docker-compose-services-local.yml predix-edge-services
-  sleep 10
-  if [[  $(docker service ls -f "name=predix-edge-services" | grep 0/1 | wc -l) == "1" ]]; then
-    docker service ls
-    echo 'Error: One of the predix-edge-services did not launch'
-    exit 1
-  fi
-
-  docker build -t edge-to-cloud-filter:1.0.0 . --build-arg http_proxy --build-arg https_proxy
-  docker stack deploy --compose-file docker-compose.yml edge-to-cloud
-  sleep 10
-  if [[  $(docker service ls -f "name=edge-to-cloud" | grep 0/1 | wc -l) == "1" ]]; then
-    docker service ls
-    echo 'Error: One of the edge-to-cloud services did not launch'
-    exit 1
-  fi
-
-  docker stack ls
-  docker stack services predix-edge-broker
-  docker stack services predix-edge-services
-  docker stack services edge-to-cloud
-  docker ps
+########### custom logic starts here ###########
+if ! [ -d "$logDir" ]; then
+  mkdir "$logDir"
+  chmod 744 "$logDir"
 fi
 
+########### custom logic ends here ###########
+docker service ls
+echo ""
+echo ""
+docker network ls
+
+echo "" >> $SUMMARY_TEXTFILE
+echo "Edge to Cloud App " >> $SUMMARY_TEXTFILE
+echo "" >> $SUMMARY_TEXTFILE
+
 cat $SUMMARY_TEXTFILE
-__append_new_line_log "" "$logDir"
-__append_new_line_log "Successfully completed Edge to Cloud App installation!" "$quickstartLogDir"
-__append_new_line_log "" "$logDir"
+echo "......................................Done......................................"

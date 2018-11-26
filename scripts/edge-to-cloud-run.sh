@@ -4,7 +4,6 @@ set -e
 
 trap "trap_ctrlc" 2
 
-
 APPLICATION_ID="edge-to-cloud"
 EDGE_APP_NAME="edge-to-cloud"
 EDGE_APP="edge-to-cloud.tar.gz"

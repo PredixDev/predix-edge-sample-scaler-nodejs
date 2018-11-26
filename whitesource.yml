@@ -1,0 +1,4 @@
+---
+image: node:8.11
+command: cd src && npm install
+dependency-dirs: src/node_modules

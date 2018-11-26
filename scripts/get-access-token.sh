@@ -3,6 +3,7 @@ CLIENT_ID=$1
 SECRET=$2
 UAA_URL=$3
 
+
 # base64 encide the client and secret
 AUTH='Authorization: Basic '$(echo -n $CLIENT_ID:$SECRET | base64)
 

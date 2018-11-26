@@ -28,5 +28,6 @@ else
   echo "Predix Edge Cloud Gateway Service service already running"
 fi
 
+
 sleep 10
 docker service ls
