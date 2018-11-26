@@ -28,7 +28,7 @@ services:
     networks:
       - predix-edge-broker_net
   edge-to-cloud-filter:
-    image: "predixadoption/edge-to-cloud-filter:{EDGE_TO_CLOUD_FILTER_VERSION}"
+    image: "predixadoption/edge-to-cloud:{EDGE_TO_CLOUD_FILTER_VERSION}"
     networks:
       - predix-edge-broker_net
 networks:

@@ -23,7 +23,7 @@ function local_read_args() {
       shift
     ;;
     --build-app)
-      BUILD_APP=true
+      BUILD_APP="true"
     ;;
     --skip-predix-services)
       SKIP_PREDIX_SERVICES=true
@@ -145,9 +145,9 @@ sed "s#{EDGE_TO_CLOUD_FILTER_VERSION}#$dockerVersion#" docker-compose.yml > $(pw
 mv $(pwd)/docker-compose.yml.tmp $(pwd)/docker-compose.yml
 
 if [[ "$BUILD_APP" == "true" ]]; then
-  docker build  --no-cache -t "predixadoption/edge-to-cloud-filter:$dockerVersion" -f ./Dockerfile . --build-arg http_proxy --build-arg https_proxy --build-arg no_proxy
+  docker build  --no-cache -t "predixadoption/$DOCKER_STACK_NAME:$dockerVersion" -f ./Dockerfile . --build-arg http_proxy --build-arg https_proxy --build-arg no_proxy
 else
-  docker pull predixadoption/edge-to-cloud-filter:$dockerVersion
+  docker pull predixadoption/$DOCKER_STACK_NAME:$dockerVersion
 fi
 cd ../..
 
