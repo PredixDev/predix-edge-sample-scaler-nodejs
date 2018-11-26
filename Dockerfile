@@ -3,7 +3,7 @@ FROM node
 
 LABEL maintainer="Predix Builder Relations"
 LABEL org="https://hub.docker.com/u/predixadoption"
-LABEL version="1.0.8"
+LABEL version="1.0.16"
 LABEL support="https://forum.predix.io"
 LABEL license="https://github.com/PredixDev/predix-docker-samples/blob/master/LICENSE.md"
 
