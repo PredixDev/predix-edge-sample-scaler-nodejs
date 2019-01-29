@@ -1,28 +1,32 @@
 version: "3.0"
 
 services:
-  predix-edge-broker:
-    image: "dtr.predix.io/predix-edge/predix-edge-broker:amd64-latest"
-    hostname: 127.0.0.1
+  opcua-simulator:
+    image: "predixadoption/predix-edge-opcua-simulator:latest
+    networks:
+      - predix-edge-broker_net
     ports:
-      - 1883:1883
-
+      - 4334:4334
   opcua:
-    image: "dtr.predix.io/predix-edge/protocol-adapter-opcua:amd64-latest"
+    image: "dtr.predix.io/predix-edge/protocol-adapter-opcua:amd64-1.1.0"
     environment:
       config: "/config/config-opcua.json"
     volumes:
       - ./config:/config
       - ./data:/data
-
-
-  cloud_gateway:
-    image: "dtr.predix.io/predix-edge/cloud-gateway:amd64-latest"
+    networks:
+      - predix-edge-broker_net
+  cloud_gateway_timeseries:
+    image: "dtr.predix.io/predix-edge/cloud-gateway:amd64-1.1.0"
     environment:
       config: "/config/config-cloud-gateway.json"
-      https_proxy: "http://proxy-src.research.ge.com:8080"
-
     volumes:
       - ./config:/config
       - ./data:/data
       - ./data:/edge-agent
+    networks:
+      - predix-edge-broker_net
+
+networks:
+  predix-edge-broker_net:
+    external: true

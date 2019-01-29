@@ -1,9 +1,8 @@
 version: "3.0"
 
-
 services:
   opcua-simulator:
-    image: "dtr.predix.io/predix-edge/predix-edge-opcua-simulator:latest"
+    image: "predixadoption/predix-edge-opcua-simulator:latest"
     networks:
       - predix-edge-broker_net
     ports:
@@ -27,8 +26,8 @@ services:
       - ./data:/edge-agent
     networks:
       - predix-edge-broker_net
-  edge-to-cloud-filter:
-    image: "predixadoption/edge-to-cloud:{EDGE_TO_CLOUD_FILTER_VERSION}"
+  edge-app:
+    image: "my-nodejs-edge-app:1.0.0"
     networks:
       - predix-edge-broker_net
 networks:

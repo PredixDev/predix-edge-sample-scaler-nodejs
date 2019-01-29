@@ -1,10 +1,10 @@
 {
   "name": "my-edge-app",
-  "version": "1.0.19",
+  "version": "1.0.21",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Warning: no test specified\" && exit 0"
+    "test": "node_modules/mocha/bin/mocha test/test --exit"
   },
   "author": "",
   "license": "ISC",

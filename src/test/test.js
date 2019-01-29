@@ -180,5 +180,4 @@ describe('Scaled Data', function(){
 		assert.deepEqual(JSON.parse(app.scaleData(from_broker_two_tags, "My.App.DOUBLE2")), scaled_both_tags);
 	});
 
-
 });
