@@ -1,10 +1,11 @@
 # start with the node image
 FROM node
 
-LABEL maintainer="Predix Builder Relations"
+LABEL maintainer="Predix Edge Adoption"
 LABEL hub="https://hub.docker.com"
 LABEL org="https://hub.docker.com/u/predixadoption"
-LABEL version="1.0.21"
+LABEL repo="predix-edge-sample-scaler-nodejs"
+LABEL version="1.0.24"
 LABEL support="https://forum.predix.io"
 LABEL license="https://github.com/PredixDev/predix-docker-samples/blob/master/LICENSE.md"
 

@@ -12,7 +12,7 @@ The OPC-UA Protocol Adapter, the Predix Edge Broker, the Cloud Gateway, and the 
 4. The NodeJS app looks for data with the tag "My.App.DOUBLE1" - if it has that tag, the app modifies the data. In this case, it multiplies it by 1000, but you can change it to modify it any way you would like. It then tags the data with the tag "My.App.DOUBLE1.scaled_x_1000".
 5. The NodeJS app publishes that data to the Predix Edge MQTT Broker on the topic "timeseries_data".
 6. The Cloud Gateway subscribes to data from the Predix Edge MQTT Broker with the topics "timeseries_data".
-7. The Cloud Gateway publishes data with the topic "timeseries_data" to Predix Time Series.
+7. The Cloud Gateway publishes data to Predix Time Series.
 
 ![Architecture Diagram of the Sample NodeJS App](images/architecture.png)
 
@@ -52,7 +52,7 @@ Using a browser, log in to https://artifactory.predix.io using your predix usern
 
 Click the `Artifacts` icon and navigate to the `predix-ext/predix-edge/<latest-version-here>/os` folder and `Download` the `edge-broker` container.
 
-Changing to use the version you downloaded, using a tool on your computer, untar it, e.g.
+**Changing the** command to use the **version** you downloaded, using a tool on your computer, untar it, e.g.
 
 ```bash
 tar -xvf predix-edge-broker-amd64-20181120-1.1.0.tar.gz
@@ -100,14 +100,12 @@ The functionality of this NodeJS app is located in the **src** folder in a file 
 The [Dockerfile](https://docs.docker.com/engine/reference/builder/) is used to compile your app into a Docker image that can be run in Predix Edge .  Please review the file and the comments around each like to understand how it works.
 
 
-The *docker build* command is used to generate the docker image from the source code of your app.  Executing this command from the commandline will create a Docker image named **my-nodejs-edge-app** with a version of **1.0.0**.
+The *docker build* command is used to generate the docker image from the source code of your app.  Executing this command from the command line will create a Docker image named **my-nodejs-edge-app** with a version of **1.0.0**.
 
 ```bash
 docker build -t my-nodejs-edge-app:1.0.0 .
 ```
 If your build machine is behind a proxy you will need to specify the proxies as build arguments.  You can pull in the proxy values from the environment variables on your machine.
-
-The *docker build* command is used to generate the docker image from the source code of your app.  Executing this command from the commandline will create a Docker image named **my-edge-app** with a version of **1.0.0**.
 
 ```bash
 docker build --build-arg http_proxy=$http_proxy --build-arg https_proxy=$https_proxy -t my-nodejs-edge-app:1.0.0 .
@@ -151,7 +149,7 @@ Notice that, for the Cloud Gateway service, the "-local" and "-dev" version of t
 
 
 #### config/config-opcua.json
-This configuration file is utilized by the OPC-UA Protocol Adapter image to connect to an OPC-UA server, subscribe to a series of 3 tags and publish the results on the data broker in a Time Series format.  It is configured to use an OPC-UA simulator running on the GE network.  Unless you would like to connect to a different server or simulator, you should not have to change this file.
+This configuration file is utilized by the OPC-UA Protocol Adapter image to connect to an OPC-UA server, subscribe to a series of 3 tags and publish the results on the data broker in Time Series format.  It is configured to use an OPC-UA simulator running on the GE network.  Unless you would like to connect to a different server or simulator, you should not have to change this file.
 
 Below is a subset of the config file highlighting key properties you would change if obtaining data form a different OPC-UA server:
 
@@ -254,7 +252,7 @@ The script takes three input parameters:
 ./scripts/get-access-token.sh my-client-id my-secret -my-uaa-url
 ```
 
-After you run the script, a file names *access_token* will be created in the data folder of the app.  The app is configured to use this file to obatin the token for transmitting data to the cloud.
+After you run the script, a file named *access_token* will be created in the data folder of the app.  The app is configured to use this file to obatin the token for transmitting data to the cloud.
 
 
 #### Option 1: Run all the containers on your machine
@@ -291,7 +289,7 @@ docker logs 0000000000
 
 ##### Step 1: Run the other containers of the Application
 
-Start the Data Broker.  It is recommended to run this as a separate docker stack becuase the broker can be used with multiple applications and Predix Edge OS is shipped with the Broker already running.  Execute the following command from the commandline.  
+Start the Data Broker.  It is recommended to run this as a separate docker stack becuase the broker can be used with multiple applications and Predix Edge OS is shipped with the Broker already running.  Execute the following command from the command line.  
 
 ```bash
 docker stack deploy --compose-file docker-compose-edge-broker.yml predix-edge-broker
@@ -329,9 +327,9 @@ Packaging the app involves creating a tar.gz file with your app's Docker images 
 
 Note, you do not need to package the Predix Edge Broker image as it is already installed on the Predix Edge VM.
 
-Changing the command to use the version you downloaded, create the **app.tar.gz** file:
+**Changing the** command to use the **version** you downloaded, create the **app.tar.gz** file:
 ```bash
-docker save -o images.tar my-nodejs-edge-app:1.0.0 dtr.predix.io/predix-edge/protocol-adapter-opcua:amd64-latest dtr.predix.io/predix-edge/cloud-gateway:amd64-latest
+docker save -o images.tar my-nodejs-edge-app:1.0.0 predixadoption/predix-edge-opcua-simulator:latest dtr.predix.io/predix-edge/protocol-adapter-opcua:amd64-latest dtr.predix.io/predix-edge/cloud-gateway:amd64-latest
 
 
 tar -czvf app.tar.gz images.tar docker-compose.yml
