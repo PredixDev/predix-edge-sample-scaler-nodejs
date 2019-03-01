@@ -2,7 +2,7 @@ version: "3.0"
 
 services:
   opcua-simulator:
-    image: "predixadoption/predix-edge-opcua-simulator:1.0.5
+    image: "predixadoption/predix-edge-opcua-simulator:1.0.5"
     networks:
       - predix-edge-broker_net
     ports:

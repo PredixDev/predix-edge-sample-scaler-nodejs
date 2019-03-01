@@ -22,7 +22,7 @@ services:
     networks:
       - predix-edge-broker_net
   edge-app:
-    image: "predix-edge-sample-scaler-nodejs:1.0.26"
+    image: "predixadoption/predix-edge-sample-scaler-nodejs:1.0.34"
     networks:
       - predix-edge-broker_net
 networks:
