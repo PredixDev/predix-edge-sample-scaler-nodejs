@@ -55,7 +55,7 @@ SKIP_SETUP=false
 IZON_SH="https://raw.githubusercontent.com/PredixDev/izon/1.2.0/izon2.sh"
 #ASSET_MODEL="-amrmd predix-ui-seed/server/sample-data/predix-asset/asset-model-metadata.json predix-ui-seed/server/sample-data/predix-asset/asset-model.json"
 REPO_NAME="predix-edge-sample-scaler-nodejs"
-DOCKER_STACK_NAME="my-nodejs-edge-app"
+DOCKER_STACK_NAME="edge-to-cloud"
 SCRIPT="-script edge-starter-deploy.sh -script-readargs edge-starter-deploy-readargs.sh --run-edge-app"
 VERSION_JSON="version.json"
 PREDIX_SCRIPTS="predix-scripts"
@@ -138,16 +138,8 @@ echo "quickstart_args=$QUICKSTART_ARGS"
 cd $PREDIX_SCRIPTS/$REPO_NAME
 dockerVersion=$(grep version Dockerfile | awk -F"=" '{print $2}' | tr -d "\"")
 echo "$dockerVersion"
-sed "s#my-nodejs-edge-app:1.0.0#my-nodejs-edge-app:$dockerVersion#" docker-compose-local.yml > $(pwd)/docker-compose-local.yml.tmp
-mv $(pwd)/docker-compose-local.yml.tmp $(pwd)/docker-compose-local.yml
-
-sed "s#my-nodejs-edge-app:1.0.0#my-nodejs-edge-app:$dockerVersion#" docker-compose.yml > $(pwd)/docker-compose.yml.tmp
-mv $(pwd)/docker-compose.yml.tmp $(pwd)/docker-compose.yml
-
 if [[ "$BUILD_APP" == "true" ]]; then
   docker build  --no-cache -t "$DOCKER_STACK_NAME:$dockerVersion" -f ./Dockerfile . --build-arg http_proxy --build-arg https_proxy --build-arg no_proxy
-else
-  docker pull $DOCKER_STACK_NAME:$dockerVersion
 fi
 cd ../..
 

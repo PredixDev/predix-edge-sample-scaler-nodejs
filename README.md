@@ -16,7 +16,131 @@ The OPC-UA Protocol Adapter, the Predix Edge Broker, the Cloud Gateway, and the 
 
 ![Architecture Diagram of the Sample NodeJS App](images/architecture.png)
 
-#### Software You will Need
+## Running the App
+
+There are three different ways in which you can run your application.
+
+ - Run all the containers locally on your machine
+ - Run all the containers locally on your machine, except for the Node.js code, for development or debugging purposes.
+ - Tar the containers, deploy to Predix Edge OS and run in a Predix Edge OS VM.
+
+
+## Running in Predix Edge
+
+### Getting a Predix Edge VM
+
+Please follow the [documentation](https://docs.predix.io/en-US/content/service/edge_software_and_services/predix_edge_os/predix-edge-os-image) to install a Predix Edge OS Developer VM on your computer
+
+### Retrieve the App tar and config.zip
+
+Using a browser, follow the same [login documentation](https://docs.predix.io/en-US/content/service/edge_software_and_services/predix_edge_os/installing-predix-edge-os-virtual-machine) to log in to [Artifactory](https://artifactory.predix.io).
+
+Then visit the url where the Sample applicaton tar files are located
+
+https://artifactory.predix.io/artifactory/webapp/#/artifacts/browse/tree/General/PREDIX-EXT/predix-edge/com/ge/predix/edge/app/samples
+
+Next, download the sample application tar.  For reference, the application tar consists of:
+
+ - images.tar - Docker containers that comprise the Edge Application
+ - [docker-compose.yml](https://github.com/PredixDev/predix-edge-sample-scaler-nodejs/blob/master/docker-compose.yml) - an app descriptor that is used to the launch the Docker containers.  
+
+ Also, in Artifactory, download the Config.zip file for the app.  For reference, in this application, the config.zip consists of one confg file for 3 of the containers in this 4 container app.
+
+  - [config-simulator.json](https://github.com/PredixDev/predix-edge-sample-scaler-nodejs/blob/master/config/config-simulator.json)
+  - [config-opcua.json](https://github.com/PredixDev/predix-edge-sample-scaler-nodejs/blob/master/config/config-opcua.json)
+  - [config-cloud-gateway.json](https://github.com/PredixDev/predix-edge-sample-scaler-nodejs/blob/master/config/config-cloud-gateway.json)
+
+Note the config-cloud-gateway.json will not be sending to your timeseries until it is updated with a Predix Time Series Zone Id.  
+
+### Upload Application and Config to PETC
+
+Predix Edge Technician Console is an App that is already running in Predix Edge OS.  
+
+Using a browser, follow the [instructions](https://docs.predix.io/en-US/content/service/edge_software_and_services/predix_edge_device_configuration_and_enrollment/) to log in.
+
+Navigate to the `Applications Manager` and under the `Actions` dropdown, upload the Application tar.
+
+Next `Deploy` it.
+
+Finally, `upload` the Config.zip.  You will see the App stopping and restarting.
+
+You should see the App in a `Running` status.
+
+### Validating the results
+
+If you visit the simulator config file, [config-simulation.json](https://github.com/PredixDev/predix-edge-sample-scaler-nodejs/blob/master/config/config-simulator.json), you will see
+
+```json
+[
+    {"browseName": "Simulator.Device1.FLOAT1", "frequency": 1000, "random": {"dataType": "Double", "min": 0, "max": 0.5, "precision": 4}},
+    {"browseName": "Simulator.Device1.FLOAT2", "frequency": 1000, "counter": {"dataType": "Double", "start": 1.10, "min": 1.10, "max": 4.40, "increment": 1.10 }},
+    {"browseName": "Simulator.Device1.FLOAT3", "frequency": 1000, "counter": {"dataType": "Integer", "start": 1, "min": 1, "max": 1000, "increment": 1 }},
+    {"browseName": "Simulator.Device1.FLOAT4", "frequency": 1000, "counter": {"dataType": "Integer", "start": 1, "min": 1, "max": 1000, "increment": 10 }},
+    {"browseName": "Simulator.Device1.FLOAT5", "frequency": 1000, "counter": {"dataType": "Integer", "start": 1, "min": 1, "max": 1000, "increment": 20 }},
+    {"browseName": "Simulator.Device1.FLOAT6", "frequency": 1000, "counter": {"dataType": "Integer", "start": 1, "min": 1, "max": 1000, "increment": 30 }},
+    {"browseName": "Simulator.Device1.FLOAT7", "frequency": 1000, "counter": {"dataType": "Integer", "start": 1, "min": 1, "max": 1000, "increment": 40 }}
+]
+```
+If you visit the OPCUA Adapter config file, [config-simulation.json](https://github.com/PredixDev/predix-edge-sample-scaler-nodejs/blob/master/config/config-opcua.json), you will see how the simulator fields get mapped to Time Series `alias` tag names.
+
+```json
+"data_map": [
+              {
+                "alias": "Compressor-CMMS-Compressor-2018.crank-frame-compressionratio",
+                "id": "ns=1;s=Simulator.Device1.FLOAT1"
+              },
+              {
+                "alias": "Compressor-CMMS-Compressor-2018.crank-frame-dischargepressure",
+                "id": "ns=1;s=Simulator.Device1.FLOAT2"
+              },
+              {
+                "alias": "Compressor-CMMS-Compressor-2018.crank-frame-suctionpressure",
+                "id": "ns=1;s=Simulator.Device1.FLOAT3"
+              },
+              {
+                "alias": "Compressor-CMMS-Compressor-2018.crank-frame-maximumpressure",
+                "id": "ns=1;s=Simulator.Device1.FLOAT4"
+              },
+              {
+                "alias": "Compressor-CMMS-Compressor-2018.crank-frame-minimumpressure",
+                "id": "ns=1;s=Simulator.Device1.FLOAT5"
+              },
+              {
+                "alias": "Compressor-CMMS-Compressor-2018.crank-frame-temperature",
+                "id": "ns=1;s=Simulator.Device1.FLOAT6"
+              },
+              {
+                "alias": "Compressor-CMMS-Compressor-2018.crank-frame-velocity",
+                "id": "ns=1;s=Simulator.Device1.FLOAT7"
+              }
+            ]
+```
+
+Next, visit the PETC Logs UI screen.  Choose:
+
+1. App - Service Name
+2. predix-edge-sample-scaler-nodejs
+3. cloud-gateway-timeseries
+4. Additonal Options
+5. Message Priority = Debug
+6. The log viewer only shows the first 20 rows in the date range, so you might need to narrow the range
+7. Click the Update Preview button
+
+You will see the up-scaled data and can compare it to the raw data in the 'opcua' adapter logs.  You may have to download the log files in order to find the matching timestamp.
+
+You will also see that the Scaler app changed the name of the tag, adding ".scaled_x_1000"
+
+```log
+Feb 28 03:23:52 predixedge b35f5fc9ed5b[319]: {"messageId":"flex-pipe","body":[{"datapoints":[[1551324232686,3300,3]],
+"name":"Compressor-CMMS-Compressor-2018.crank-frame-dischargepressure.scaled_x_1000","attributes":{"machine_type":"opcua"}}]}
+```
+
+
+
+
+## Running Locally in Docker
+
+### Software You will Need
 
 In order to develop and run this sample locally you will need:
 * [**NodeJS**](https://nodejs.org/en/)
@@ -29,20 +153,7 @@ Once you have NodeJS and npm installed, install the dependencies using the `npm 
 
 This app also uses [Mocha](https://mochajs.org/) and [Chai](https://www.chaijs.com/) in the test suite, which will be downloaded as part of the dependencies. To run the tests, run `npm test` from the `src` file of the project. As you make this application your own, please extend the tests to fit your needs.
 
-In order to devlop and run this sample locally you will need:
-
-* [**NodeJS**](https://nodejs.org/en/)
-* [**NPM**](https://www.npmjs.com/)
-* [**Docker**](https://www.docker.com/)
-* The *UAA URL*, *ClientID* and *Secret* for the Predix Cloud Time Series service to which you wish to ingest the app's output.
-
-
-Once you have NodeJS and npm installed, install the dependencies using the `npm install` command.
-
-This app also uses [Mocha](https://mochajs.org/) and [Chai](https://www.chaijs.com/) in the test suite, which will be downloaded as part of the dependencies. To run the tests, run `npm test` from the `src` file of the project. As you make this application your own, please extend the tests to fit your needs.
-
-
-#### Step 1: Install the core Predix Edge components
+### Step 1: Install the core Predix Edge components
 
 To get started developing locally you will need to pull the core Predix Edge Docker images onto your local machine.  
 
@@ -84,31 +195,33 @@ Finally, create a [Docker Swarm](https://docs.docker.com/engine/swarm/) on your 
 docker swarm init
 ```
 
-#### Step 2: Clone this Repository
+### Step 2: Clone this Repository
 
 Clone this repository to download all of the source code.
 ```bash
-git clone git@github.com/PredixDev/predix-edge-sample-scaler-nodejs.git
+git clone https://github.com/PredixDev/predix-edge-sample-scaler-nodejs.git
 ```
 
-#### Step 3: Review the App Functionality
+### Step 3: Review the App Functionality
 The functionality of this NodeJS app is located in the **src** folder in a file named **index.js**.  Please review the file and the comments around each line to understand how it works.
 
 
-#### Step 4: Create a Docker image of the App
+### Step 4: Create a Docker image of the App
 
 The [Dockerfile](https://docs.docker.com/engine/reference/builder/) is used to compile your app into a Docker image that can be run in Predix Edge .  Please review the file and the comments around each like to understand how it works.
 
 
-The *docker build* command is used to generate the docker image from the source code of your app.  Executing this command from the command line will create a Docker image named **my-nodejs-edge-app** with a version of **1.0.0**.
+The *docker build* command is used to generate the docker image from the source code of your app.  Executing this command from the command line will create a Docker image named **predix-edge-** with the current version.
+
+Changing **latest** to match current version, build, the container. The version should match what is in the docker-compose-local.yml.
 
 ```bash
-docker build -t my-nodejs-edge-app:1.0.0 .
+docker build -t edge-to-cloud:latest .
 ```
 If your build machine is behind a proxy you will need to specify the proxies as build arguments.  You can pull in the proxy values from the environment variables on your machine.
 
 ```bash
-docker build --build-arg http_proxy=$http_proxy --build-arg https_proxy=$https_proxy -t my-nodejs-edge-app:1.0.0 .
+docker build --build-arg http_proxy=$http_proxy --build-arg https_proxy=$https_proxy -t edge-to-cloud:latest .
 ```
 
 After the build completes you can see your image, as well as the core Predix Edge images we pulled onto your machine with the *docker images* command.
@@ -117,17 +230,17 @@ After the build completes you can see your image, as well as the core Predix Edg
 docker images
 ```
 
-#### Step 5: Configure the App
+### Step 5: Configure the App
 Predix Edge apps contain a series of configuration files to define parameters for the app's deployment and execution.  Our app contains the following configuration files.
 
-#### docker-compose.yml
+### docker-compose.yml
 App deployment parameters are defined in the **docker-compose.yml** file.  This file defines the Docker images used to construct the application.  It also contains parameters for configuring the image, such as any  specific configuration files required by each image.
 
 Our project includes these files:
 
- - docker-compose-edge-broker.yml - use to run the MQTT Data Broker on your machine
- - docker-compose-local.yml - use to run all the app containers on your machine
- - docker-compose-dev.yml - use to run all the app containers on your machine, except for the Node.js code, for development or debugging purposes.
+ - **docker-compose-edge-broker.yml** - use to run the MQTT Data Broker on your machine
+ - **docker-compose-local.yml** - use to run all the app containers on your machine
+ - **docker-compose-dev.yml** - use to run all the app containers on your machine, except for the Node.js code, for development or debugging purposes.
 
 
 The primary differences when running iside Predix Edge OS include:
@@ -148,7 +261,7 @@ Notice that, for the Cloud Gateway service, the "-local" and "-dev" version of t
 
 
 
-#### config/config-opcua.json
+### config/config-opcua.json
 This configuration file is utilized by the OPC-UA Protocol Adapter image to connect to an OPC-UA server, subscribe to a series of 3 tags and publish the results on the data broker in Time Series format.  It is configured to use an OPC-UA simulator running on the GE network.  Unless you would like to connect to a different server or simulator, you should not have to change this file.
 
 Below is a subset of the config file highlighting key properties you would change if obtaining data form a different OPC-UA server:
@@ -189,7 +302,7 @@ Below is a subset of the config file highlighting key properties you would chang
             "log_name": "opcua_mqtt"
         }
 ```
-#### config/config-cloud-gateway.json
+### config/config-cloud-gateway.json
 This file is used by the Cloud Gateway service and contains properties indicating which Predix Cloud Time Series service to send data to.
 
 - **transport_addr** - (in the Time Series section) is the websockets URL for your Predix Cloud Time Series service.  
@@ -228,16 +341,9 @@ This file is used by the Cloud Gateway service and contains properties indicatin
     }
 ```
 
-# Running the App and Verifying the Data
+### Step 6. Run the App and Validate the Results
 
-There are three different ways in which you can run your application.
-
- - Run all the containers on your machine
- - Run all the containers on your machine, except for the Node.js code, for development or debugging purposes.
- - Tar the containers, deploy to Predix Edge OS and run in a Predix Edge OS VM.
-
-
-##### Step 1: Get Access Token
+#### Step 1: Get Access Token
 
 The result of this app is to publish a scaled value to Predix Cloud Time Series.  In order to do so, the app requires a UAA token with permissions to ingest data.  On a Predix Edge device, apps obtain this token from the device once it is enrolled to Edge Manager.
 
@@ -268,7 +374,7 @@ docker stack deploy --compose-file docker-compose-edge-broker.yml predix-edge-br
 Now run the application
 
 ```bash
-docker stack deploy --compose-file docker-compose-local.yml my-nodejs-edge-app
+docker stack deploy --compose-file docker-compose-local.yml edge-to-cloud
 ```
 
 ##### Step 2: Check Status of Application
@@ -276,7 +382,7 @@ docker stack deploy --compose-file docker-compose-local.yml my-nodejs-edge-app
 docker ps
 ```
 
-You van view the logs generated by each container in the app by executing the docker logs command and passing in the CONTAINER ID for any of the running containers.
+You can view the logs generated by each container in the app by executing the docker logs command and passing in the CONTAINER ID for any of the running containers.
 
 For example (where 0000000000 is one of the container ids displayed from your docker ps output):
 
@@ -298,10 +404,10 @@ docker stack deploy --compose-file docker-compose-edge-broker.yml predix-edge-br
 Now run the other containers of the application
 
 ```bash
-docker stack deploy --compose-file docker-compose-dev.yml my-nodejs-edge-app
+docker stack deploy --compose-file docker-compose-dev.yml edge-to-cloud
 ```
 
-#### Step 2: Start Your Application
+##### Step 2: Start Your Application
 
 ```bash
 node src/index.js local
@@ -312,7 +418,7 @@ node src/index.js local
 docker ps
 ```
 
-You van view the logs generated by each container in the app by executing the docker logs command and passing in the CONTAINER ID for any of the running containers.
+You can view the logs generated by each container in the app by executing the docker logs command and passing in the CONTAINER ID for any of the running containers.
 
 For example (where 0000000000 is one of the container ids displayed from your docker ps output):
 
@@ -327,9 +433,9 @@ Packaging the app involves creating a tar.gz file with your app's Docker images 
 
 Note, you do not need to package the Predix Edge Broker image as it is already installed on the Predix Edge VM.
 
-**Changing the** command to use the **version** you downloaded, create the **app.tar.gz** file:
+**Changing the** command from **latest** to use the **version** you downloaded, create the **app.tar.gz** file:
 ```bash
-docker save -o images.tar my-nodejs-edge-app:1.0.0 predixadoption/predix-edge-opcua-simulator:latest dtr.predix.io/predix-edge/protocol-adapter-opcua:amd64-latest dtr.predix.io/predix-edge/cloud-gateway:amd64-latest
+docker save -o images.tar edge-to-cloud:latest predixadoption/predix-edge-opcua-simulator:latest dtr.predix.io/predix-edge/protocol-adapter-opcua:amd64-latest dtr.predix.io/predix-edge/cloud-gateway:amd64-latest
 
 
 tar -czvf app.tar.gz images.tar docker-compose.yml

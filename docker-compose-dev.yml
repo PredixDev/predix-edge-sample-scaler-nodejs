@@ -16,7 +16,7 @@ services:
       - ./data:/data
     networks:
       - predix-edge-broker_net
-  cloud_gateway_timeseries:
+  cloud_gateway:
     image: "dtr.predix.io/predix-edge/cloud-gateway:amd64-1.1.0"
     environment:
       config: "/config/config-cloud-gateway.json"

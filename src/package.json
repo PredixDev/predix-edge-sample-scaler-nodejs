@@ -1,6 +1,6 @@
 {
-  "name": "my-edge-app",
-  "version": "1.0.24",
+  "name": "edge-to-cloud",
+  "version": "1.0.26",
   "description": "",
   "main": "index.js",
   "scripts": {

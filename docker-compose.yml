@@ -15,14 +15,14 @@ services:
       config: "/config/config-opcua.json"
     networks:
       - predix-edge-broker_net
-  cloud_gateway_timeseries:
+  cloud_gateway:
     image: "dtr.predix.io/predix-edge/cloud-gateway:amd64-1.1.0"
     environment:
       config: "/config/config-cloud-gateway.json"
     networks:
       - predix-edge-broker_net
   edge-app:
-    image: "my-nodejs-edge-app:1.0.0"
+    image: "predix-edge-sample-scaler-nodejs:1.0.26"
     networks:
       - predix-edge-broker_net
 networks:
