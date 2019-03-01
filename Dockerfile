@@ -5,7 +5,7 @@ LABEL maintainer="Predix Edge Adoption"
 LABEL hub="https://hub.docker.com"
 LABEL org="https://hub.docker.com/u/predixadoption"
 LABEL repo="predix-edge-sample-scaler-nodejs"
-LABEL version="1.0.26"
+LABEL version="1.0.29"
 LABEL support="https://forum.predix.io"
 LABEL license="https://github.com/PredixDev/predix-docker-samples/blob/master/LICENSE.md"
 

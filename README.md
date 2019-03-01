@@ -216,12 +216,12 @@ The *docker build* command is used to generate the docker image from the source 
 Changing **latest** to match current version, build, the container. The version should match what is in the docker-compose-local.yml.
 
 ```bash
-docker build -t edge-to-cloud:latest .
+docker build -t predix-edge-sample-scaler-nodejs:latest .
 ```
 If your build machine is behind a proxy you will need to specify the proxies as build arguments.  You can pull in the proxy values from the environment variables on your machine.
 
 ```bash
-docker build --build-arg http_proxy=$http_proxy --build-arg https_proxy=$https_proxy -t edge-to-cloud:latest .
+docker build --build-arg http_proxy=$http_proxy --build-arg https_proxy=$https_proxy -t predix-edge-sample-scaler-nodejs:latest .
 ```
 
 After the build completes you can see your image, as well as the core Predix Edge images we pulled onto your machine with the *docker images* command.
