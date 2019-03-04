@@ -1,6 +1,6 @@
 {
   "name": "predix-edge-sample-scaler-nodejs",
-  "version": "1.0.36",
+  "version": "1.0.37",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mqtt": "^2.18.0"
+    "mqtt": "^2.18.8"
   },
   "devDependencies": {
     "chai": "^4.1.2",
