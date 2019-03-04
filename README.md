@@ -37,7 +37,7 @@ Using a browser, follow the same [login documentation](https://docs.predix.io/en
 
 Then visit the url where the Sample applicaton tar files are located
 
-https://artifactory.predix.io/artifactory/webapp/#/artifacts/browse/tree/General/PREDIX-EXT/predix-edge/com/ge/predix/edge/app/samples
+https://artifactory.predix.io/artifactory/webapp/#/artifacts/browse/tree/General/PREDIX-EXT/predix-edge/samples/com/ge/predix/edge/app
 
 Next, download the sample application tar.  For reference, the application tar consists of:
 
@@ -435,7 +435,7 @@ Note, you do not need to package the Predix Edge Broker image as it is already i
 
 **Changing the** command from **latest** to use the **version** you downloaded, create the **app.tar.gz** file:
 ```bash
-docker save -o images.tar edge-to-cloud:latest predixadoption/predix-edge-opcua-simulator:latest dtr.predix.io/predix-edge/protocol-adapter-opcua:amd64-latest dtr.predix.io/predix-edge/cloud-gateway:amd64-latest
+docker save -o images.tar edge-to-cloud:latest predixedge/predix-edge-opcua-simulator:latest dtr.predix.io/predix-edge/protocol-adapter-opcua:amd64-latest dtr.predix.io/predix-edge/cloud-gateway:amd64-latest
 
 
 tar -czvf app.tar.gz images.tar docker-compose.yml

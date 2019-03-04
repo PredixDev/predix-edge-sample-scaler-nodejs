@@ -3,7 +3,7 @@ version: "3.0"
 services:
 
   opcua-simulator:
-    image: "predixadoption/predix-edge-opcua-simulator:1.0.5"
+    image: "predixedge/predix-edge-opcua-simulator:1.0.7"
     networks:
       - predix-edge-broker_net
     ports:
@@ -19,10 +19,12 @@ services:
     image: "dtr.predix.io/predix-edge/cloud-gateway:amd64-1.1.0"
     environment:
       config: "/config/config-cloud-gateway.json"
+    env_file:
+      - /etc/environment
     networks:
       - predix-edge-broker_net
   edge-app:
-    image: "predixadoption/predix-edge-sample-scaler-nodejs:1.0.34"
+    image: "predixedge/predix-edge-sample-scaler-nodejs:1.0.36"
     networks:
       - predix-edge-broker_net
 networks:
