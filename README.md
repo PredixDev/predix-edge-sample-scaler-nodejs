@@ -211,9 +211,9 @@ The functionality of this NodeJS app is located in the **src** folder in a file 
 The [Dockerfile](https://docs.docker.com/engine/reference/builder/) is used to compile your app into a Docker image that can be run in Predix Edge .  Please review the file and the comments around each like to understand how it works.
 
 
-The *docker build* command is used to generate the docker image from the source code of your app.  Executing this command from the command line will create a Docker image named **predix-edge-** with the current version.
+The *docker build* command is used to generate the docker image from the source code of your app.  Executing this command from the command line will create a Docker image named **predix-edge-sample-scaler-nodejs** with the current version.
 
-Changing **latest** to match current version, build, the container. The version should match what is in the docker-compose-local.yml.
+Changing **latest** to match current version, build the container. The version should match what is in the docker-compose-local.yml.
 
 ```bash
 docker build -t predix-edge-sample-scaler-nodejs:latest .
