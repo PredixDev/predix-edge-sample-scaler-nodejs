@@ -291,7 +291,7 @@ Below is a subset of the config file highlighting key properties you would chang
             }
           ]
       }
-    }
+    },
     "mqtt": {
         "type": "cdpout",
         "config": {
