@@ -291,7 +291,7 @@ Below is a subset of the config file highlighting key properties you would chang
             }
           ]
       }
-
+    }
     "mqtt": {
         "type": "cdpout",
         "config": {
@@ -301,6 +301,7 @@ Below is a subset of the config file highlighting key properties you would chang
             "log_level": "debug",
             "log_name": "opcua_mqtt"
         }
+    }
 ```
 ### config/config-cloud-gateway.json
 This file is used by the Cloud Gateway service and contains properties indicating which Predix Cloud Time Series service to send data to.
