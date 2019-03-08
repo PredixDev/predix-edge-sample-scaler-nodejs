@@ -51,27 +51,25 @@ function local_read_args() {
 BRANCH="master"
 PRINT_USAGE=0
 SKIP_SETUP=false
+PREDIX_SCRIPTS_ORG="PredixDev"
+PREDIX_SCRIPTS="predix-scripts"
+VERSION_JSON="version.json"
+GITHUB_RAW="https://raw.githubusercontent.com"
+IZON_SH="https://raw.githubusercontent.com/PredixDev/izon/1.5.0/izon2.sh"
 
-IZON_SH="https://raw.githubusercontent.com/PredixDev/izon/1.2.0/izon2.sh"
-#ASSET_MODEL="-amrmd predix-ui-seed/server/sample-data/predix-asset/asset-model-metadata.json predix-ui-seed/server/sample-data/predix-asset/asset-model.json"
+GITHUB_ORG="PredixDev"
 REPO_NAME="predix-edge-sample-scaler-nodejs"
 DOCKER_STACK_NAME="predix-edge-sample-scaler-nodejs"
 SCRIPT="-script edge-starter-deploy.sh -script-readargs edge-starter-deploy-readargs.sh --run-edge-app"
-VERSION_JSON="version.json"
-PREDIX_SCRIPTS="predix-scripts"
-VERSION_JSON="version.json"
 APP_DIR="edge-nodejs-scaler"
 APP_NAME="Edge Node.js Scaler"
-GITHUB_RAW="https://raw.githubusercontent.com/PredixDev"
-GITHUB_RAW_REPO="https://raw.githubusercontent.com/PredixDev"
-
 TOOLS="Docker, Git, Node.js"
 TOOLS_SWITCHES="--docker --git --nodejs"
 
 # Process switches
 local_read_args $@
 
-VERSION_JSON_URL="$GITHUB_RAW_REPO/$REPO_NAME/$BRANCH/version.json"
+VERSION_JSON_URL="$GITHUB_RAW/$GITHUB_ORG/$REPO_NAME/$BRANCH/version.json"
 
 if [[ "$SKIP_PREDIX_SERVICES" == "true" ]]; then
   QUICKSTART_ARGS="$QUICKSTART_ARGS $SCRIPT -repo-name $REPO_NAME -app-name $DOCKER_STACK_NAME"
@@ -111,7 +109,7 @@ function init() {
   eval "$(curl -s -L $IZON_SH)"
 
   getVersionFile
-  getLocalSetupFuncs
+  getLocalSetupFuncs $GITHUB_RAW $PREDIX_SCRIPTS_ORG
 }
 
 if [[ $PRINT_USAGE == 1 ]]; then
@@ -139,7 +137,7 @@ cd $PREDIX_SCRIPTS/$REPO_NAME
 dockerVersion=$(grep version Dockerfile | awk -F"=" '{print $2}' | tr -d "\"")
 echo "$dockerVersion"
 if [[ "$BUILD_APP" == "true" ]]; then
-  docker build  --no-cache -t "$DOCKER_STACK_NAME:$dockerVersion" -f ./Dockerfile . --build-arg http_proxy --build-arg https_proxy --build-arg no_proxy
+  docker build  --no-cache -t "predixedge/$DOCKER_STACK_NAME:$dockerVersion" -t "predixedge/$DOCKER_STACK_NAME:latest" -f ./Dockerfile . --build-arg http_proxy --build-arg https_proxy --build-arg no_proxy
 fi
 cd ../..
 

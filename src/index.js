@@ -5,29 +5,22 @@ var mqtt = require('mqtt')
 
 console.log("app starting");
 
-function scaleData(item,tag){
-  var length = item.body.length;
+function scaleData(jsonMessage){
 
-  if (length>0){
-    for (var i=0; i<length; i++){
 
-      //if the item is equal to the tagName we are loojing for then scale up the value by 1000 and put it back on the broker to be sent to timeseries
-      if (item.body[i].name == tag)
-      {
-          var value = item.body[i].datapoints[0][1];
+  //if the item is equal to the tagName we are looking for then scale up the value by 1000 and put it back on the broker to be sent to timeseries
+  for ( var i=0;i<jsonMessage.body.length;i++)
+  {
+      var tagName = jsonMessage.body[i].name;
+      var value = jsonMessage.body[i].datapoints[0][1];
+      console.log("Original : "+tagName +" : "+value);
+      //scale the tag value * 1000
+      jsonMessage.body[i].datapoints[0][1] = value * 1000;
 
-          //scale the tag value * 1000
-          value = value * 1000;
-          item.body[i].datapoints[0][1] = value;
-
-          //give the scaled tag a new name
-          item.body[i].name = tag + '.scaled_x_1000';
-         
-      }
-    } 
+      console.log("Scaled : "+tagName +" : "+jsonMessage.body[i].datapoints[0][1]);
   }
-
-  return JSON.stringify(item);
+  console.log(JSON.stringify(jsonMessage));
+  return JSON.stringify(jsonMessage);
 
 };
 
@@ -62,7 +55,7 @@ client.on('message', function (topic, message) {
 
   var jsonMessage = JSON.parse(message);
 
-  scaled_item = scaleData(jsonMessage,tagName);
+  scaled_item = scaleData(jsonMessage);
    //publish the tag back to the broker on the topic the cloud-gateway container is subscribing to
   client.publish("timeseries_data", scaled_item);
 
