@@ -249,6 +249,11 @@ The primary differences when running iside Predix Edge OS include:
 
 - Removal of all volume mounts.  Predix Edge will automatically inject a **/config** and **/data** volume into your app at runtime.
 - Removal of Proxy and DNS settings.  Apps running on a Predix Edge device will utilize these values configured on the device.
+  - To pick up proxy env vars set by PETC ensure this is added to each Service that needs it in the docker-compose.yml file.
+  ```bash
+  env_file:
+      - /etc/environment
+  ```
 - Removal of the predix-edge-broker service.  This service is pre-installed on the Predix Edge VM.
 
 Notice that, for the Cloud Gateway service, the "-local" and "-dev" version of the config file set the proxy settings to use the ``$https_proxy`` environment variable from your machine (or in the docker container).  Change the **https_proxy** value if your machine is behind a different proxy.

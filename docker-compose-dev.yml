@@ -3,6 +3,9 @@ version: "3.0"
 services:
   opcua-simulator:
     image: "predixedge/predix-edge-opcua-simulator:1.0.7"
+    hostname: "opcua-simulator"
+    volumes:
+      - ./config:/config
     networks:
       - predix-edge-broker_net
     ports:

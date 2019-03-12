@@ -63,8 +63,8 @@ DOCKER_STACK_NAME="predix-edge-sample-scaler-nodejs"
 SCRIPT="-script edge-starter-deploy.sh -script-readargs edge-starter-deploy-readargs.sh --run-edge-app"
 APP_DIR="edge-nodejs-scaler"
 APP_NAME="Edge Node.js Scaler"
-TOOLS="Docker, Git, Node.js"
-TOOLS_SWITCHES="--docker --git --nodejs"
+TOOLS="Cloud Foundry CLI, Docker, Git, jq, Predix CLI, yq"
+TOOLS_SWITCHES="--cf --docker --git --jq --predixcli --yq"
 
 # Process switches
 local_read_args $@
