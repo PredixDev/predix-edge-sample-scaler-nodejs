@@ -2,7 +2,7 @@ version: "3.0"
 
 services:
   opcua-simulator:
-    image: "predixedge/predix-edge-opcua-simulator:1.0.9"
+    image: "predixedge/predix-edge-opcua-simulator:1.0.10"
     hostname: "opcua-simulator"
     volumes:
       - ./config:/config
@@ -30,7 +30,7 @@ services:
     networks:
       - predix-edge-broker_net
   edge-app:
-    image: "predixedge/predix-edge-sample-scaler-nodejs:1.0.43"
+    image: "predixedge/predix-edge-sample-scaler-nodejs:1.0.44"
     networks:
       - predix-edge-broker_net
 networks:

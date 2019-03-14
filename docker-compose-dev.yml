@@ -2,7 +2,7 @@ version: "3.0"
 
 services:
   opcua-simulator:
-    image: "predixedge/predix-edge-opcua-simulator:1.0.7"
+    image: "predixedge/predix-edge-opcua-simulator:1.0.10"
     hostname: "opcua-simulator"
     volumes:
       - ./config:/config

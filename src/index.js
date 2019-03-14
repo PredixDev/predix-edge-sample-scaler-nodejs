@@ -14,6 +14,7 @@ function scaleData(jsonMessage){
       var tagName = jsonMessage.body[i].name;
       var value = jsonMessage.body[i].datapoints[0][1];
       console.log("Original : "+tagName +" : "+value);
+      jsonMessage.body[i].name = tagName + '.scaled_x_1000';
       //scale the tag value * 1000
       jsonMessage.body[i].datapoints[0][1] = value * 1000;
 

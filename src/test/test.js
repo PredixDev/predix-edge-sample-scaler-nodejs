@@ -23,7 +23,7 @@ describe('Scaled Data', function(){
 					machine_type:"opcua"
 				},
 				datapoints: [[1537377630622,80000,3]],
-				name: "My.App.DOUBLE1"
+				name: "My.App.DOUBLE1.scaled_x_1000"
 			}
 			],
 			messageId: "flex-pipe"
@@ -57,14 +57,14 @@ describe('Scaled Data', function(){
 					machine_type:"opcua"
 				},
 				datapoints: [[1537377630622,80000,3]],
-				name: "My.App.DOUBLE2"
+				name: "My.App.DOUBLE2.scaled_x_1000"
 			},
 			{
 				attributes:{
 					machine_type:"opcua"
 				},
 				datapoints:[[1537377630622,112640,3]],
-				name: "My.App.DOUBLE2"
+				name: "My.App.DOUBLE2.scaled_x_1000"
 			}
 			],
 			messageId: "flex-pipe"
