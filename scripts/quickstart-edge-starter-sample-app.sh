@@ -147,9 +147,9 @@ fi
 ########### custom logic starts here ###########
 if [[ "$BUILD_APP" == "true" ]]; then
   cd $PREDIX_SCRIPTS/$REPO_NAME
-  docker build  --no-cache -t "predixedge/$DOCKER_STACK_NAME:$dockerVersion" -t "predixedge/$DOCKER_STACK_NAME:latest" -f ./Dockerfile . --build-arg http_proxy --build-arg https_proxy --build-arg no_proxy
   dockerVersion=$(grep version Dockerfile | awk -F"=" '{print $2}' | tr -d "\"")
   echo "$dockerVersion"
+  docker build  --no-cache -t "predixedge/$DOCKER_STACK_NAME:$dockerVersion" -t "predixedge/$DOCKER_STACK_NAME:latest" -f ./Dockerfile . --build-arg http_proxy --build-arg https_proxy --build-arg no_proxy
   cd ../..
 fi
 
