@@ -153,7 +153,9 @@ if [[ "$BUILD_APP" == "true" ]]; then
   cd ../..
 fi
 
-
+if [[ ! $(docker swarm init) ]]; then
+  echo "Already in swarm node. Ignore the above error message"
+fi
 docker service ls
 echo ""
 echo ""
