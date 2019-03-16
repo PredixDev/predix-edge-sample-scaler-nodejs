@@ -136,22 +136,13 @@ Feb 28 03:23:52 predixedge b35f5fc9ed5b[319]: {"messageId":"flex-pipe","body":[{
 ```
 
 
-
-
 ## Running Locally in Docker
 
 ### Software You will Need
 
 In order to develop and run this sample locally you will need:
-* [**NodeJS**](https://nodejs.org/en/)
-* [**NPM**](https://www.npmjs.com/)
 * [**Docker**](https://www.docker.com/)
 * The *UAA URL*, *ClientID* and *Secret* for the Predix Cloud Time Series service to which you wish to ingest the app's output.
-
-
-Once you have NodeJS and npm installed, install the dependencies using the `npm install` command.
-
-This app also uses [Mocha](https://mochajs.org/) and [Chai](https://www.chaijs.com/) in the test suite, which will be downloaded as part of the dependencies. To run the tests, run `npm test` from the `src` file of the project. As you make this application your own, please extend the tests to fit your needs.
 
 ### Step 1: Install the core Predix Edge components
 
@@ -400,6 +391,18 @@ docker logs 0000000000
 
 
 #### Option 2: Run all the containers on your machine, except for the Node.js code
+
+This is very similar to Option 1, only instead of running the application in a Docker container, you run it locally on your machine.
+
+### Software You will Need
+
+In order to develop and run this sample locally you will need:
+* [**NodeJS**](https://nodejs.org/en/)
+* [**NPM**](https://www.npmjs.com/)
+
+Once you have NodeJS and npm installed, install the dependencies using the `npm install` command.
+
+This app also uses [Mocha](https://mochajs.org/) and [Chai](https://www.chaijs.com/) in the test suite, which will be downloaded as part of the dependencies. To run the tests, run `npm test` from the `src` file of the project. As you make this application your own, please extend the tests to fit your needs.
 
 ##### Step 1: Run the other containers of the Application
 

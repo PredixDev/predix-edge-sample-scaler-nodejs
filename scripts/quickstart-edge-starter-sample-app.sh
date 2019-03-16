@@ -60,7 +60,7 @@ IZON_SH="https://raw.githubusercontent.com/PredixDev/izon/1.5.0/izon2.sh"
 GITHUB_ORG="PredixDev"
 REPO_NAME="predix-edge-sample-scaler-nodejs"
 DOCKER_STACK_NAME="predix-edge-sample-scaler-nodejs"
-SCRIPT="-script edge-starter-deploy.sh -script-readargs edge-starter-deploy-readargs.sh --run-edge-app"
+SCRIPT="-script edge-starter-deploy.sh -script-readargs edge-starter-deploy-readargs.sh "
 APP_DIR="edge-nodejs-scaler"
 APP_NAME="Edge Node.js Scaler"
 TOOLS="Cloud Foundry CLI, Docker, Git, jq, Predix CLI, yq"
@@ -72,9 +72,10 @@ local_read_args $@
 VERSION_JSON_URL="$GITHUB_RAW/$GITHUB_ORG/$REPO_NAME/$BRANCH/version.json"
 
 if [[ "$SKIP_PREDIX_SERVICES" == "true" ]]; then
-  QUICKSTART_ARGS="$QUICKSTART_ARGS $SCRIPT -repo-name $REPO_NAME -app-name $DOCKER_STACK_NAME"
+  QUICKSTART_ARGS="$QUICKSTART_ARGS $SCRIPT --run-edge-app -repo-name $REPO_NAME -app-name $DOCKER_STACK_NAME"
 else
-  QUICKSTART_ARGS="$QUICKSTART_ARGS $SCRIPT -uaa -ts -psts -repo-name $REPO_NAME -app-name $DOCKER_STACK_NAME"
+  PS_MODEL="sample-data/predix-asset/Compressor-CMMS-Compressor-2018-Scaled.json"
+  QUICKSTART_ARGS="$QUICKSTART_ARGS $SCRIPT -uaa -ts -psts -psmodel $PS_MODEL --run-edge-app -repo-name $REPO_NAME -app-name $DOCKER_STACK_NAME"
 fi
 
 function check_internet() {
@@ -158,7 +159,7 @@ echo ""
 docker network ls
 
 echo "" >> $SUMMARY_TEXTFILE
-echo "Edge to Cloud App " >> $SUMMARY_TEXTFILE
+echo "$APP_NAME App quickstart complete " >> $SUMMARY_TEXTFILE
 echo "" >> $SUMMARY_TEXTFILE
 
 cat $SUMMARY_TEXTFILE
