@@ -152,14 +152,6 @@ if [[ "$BUILD_APP" == "true" ]]; then
   docker build  --no-cache -t "predixedge/$DOCKER_STACK_NAME:$dockerVersion" -t "predixedge/$DOCKER_STACK_NAME:latest" -f ./Dockerfile . --build-arg http_proxy --build-arg https_proxy --build-arg no_proxy
   cd ../..
 fi
-
-if [[ ! $(docker swarm init) ]]; then
-  echo "Already in swarm node. Ignore the above error message"
-fi
-docker service ls
-echo ""
-echo ""
-docker network ls
 ########### custom logic ends here ###########
 
 echo "quickstart_args=$QUICKSTART_ARGS"
