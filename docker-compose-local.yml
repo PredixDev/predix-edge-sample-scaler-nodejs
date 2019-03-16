@@ -1,4 +1,5 @@
 version: "3.0"
+#This file combines all the edge services and our services so that it can be deployed as a unit
 
 services:
   opcua-simulator:
@@ -35,7 +36,7 @@ services:
     networks:
       - predix-edge-broker_net
   edge-app:
-    image: "predixedge/predix-edge-sample-scaler-nodejs:1.0.45"
+    image: "predixedge/predix-edge-sample-scaler-nodejs:1.0.46"
     networks:
       - predix-edge-broker_net
 networks:
