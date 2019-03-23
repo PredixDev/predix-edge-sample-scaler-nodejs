@@ -36,7 +36,7 @@ services:
     networks:
       - predix-edge-broker_net
   edge-app:
-    image: "predixedge/predix-edge-sample-scaler-nodejs:1.0.48"
+    image: "predixedge/predix-edge-sample-scaler-nodejs:1.0.49"
     networks:
       - predix-edge-broker_net
 networks:
